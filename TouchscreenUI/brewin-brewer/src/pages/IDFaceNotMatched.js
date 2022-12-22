@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {Component} from 'react';
 import { createTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import SportsBarIcon from '@mui/icons-material/SportsBar';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@emotion/react';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 const theme = createTheme({
   palette: {
@@ -25,64 +26,78 @@ const theme = createTheme({
   },
 });
 
-function IDFaceNotMatched() {
+class IDFaceNotMatched extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
 
-  useEffect(() => {
+  componentDidMount() {
     const timeout = setTimeout(() => {
-        window.location.replace('/')
-    }, 5000); //render for 5 seconds and then push to start
+      window.location.replace('/')
+  }, 5000); //render for 5 seconds and then push to start
 
-        return () => clearTimeout(timeout);
-    }, []);
+      return () => clearTimeout(timeout);
+  }
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Box height="100vh">
-        <AppBar position="static" height="10vh">
-            <Toolbar disableGutters>
-              <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, mr: 2, ml: 1 }}/>
+  exit() {
+    // add function to clear data here
+
+    window.location.replace('/'); //goes back to start
+   }
+
+  render() {
+    return (
+      <ThemeProvider theme={theme}>
+        <Box height="100vh">
+          <AppBar position="static" height="10vh">
+              <Toolbar disableGutters>
+                <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, mr: 2, ml: 1 }}/>
+                <Typography
+                  variant="h6"
+                  noWrap
+                  component="a"
+                  sx={{
+                    mr: 2,
+                    display: { xs: 'none', md: 'flex' },
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    letterSpacing: '.25rem',
+                    color: 'inherit',
+                    textDecoration: 'none',
+                  }}
+                >
+                  BREWIN' BREWS
+                </Typography>
+                <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 88, fontSize:'45px' }}/>
+              </Toolbar>
+          </AppBar>
+          <Box display="flex" justifyContent="center" alignItems="center" height="80vh" bgcolor={theme.palette.secondary.main}>
               <Typography
-                variant="h6"
-                noWrap
-                component="a"
-                sx={{
-                  mr: 2,
-                  display: { xs: 'none', md: 'flex' },
-                  fontFamily: 'monospace',
-                  fontWeight: 700,
-                  letterSpacing: '.25rem',
-                  color: 'inherit',
-                  textDecoration: 'none',
-                }}
-              >
-                BREWIN' BREWS
-              </Typography>
-            </Toolbar>
-        </AppBar>
-        <Box display="flex" justifyContent="center" alignItems="center" height="80vh" bgcolor={theme.palette.secondary.main}>
-            <Typography
-                variant="h2"
-                noWrap
-                component="a"
-                sx={{
-                  display: { xs: 'none', md: 'flex' },
-                  fontFamily: 'monospace',
-                  fontWeight: 700,
-                  color: theme.palette.primary,
-                  textDecoration: 'none',
-                }}
-              >
-                Face does not match ID!
-              </Typography>
+                  variant="h2"
+                  noWrap
+                  component="a"
+                  sx={{
+                    display: { xs: 'none', md: 'flex' },
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    color: theme.palette.primary.main,
+                    textDecoration: 'none',
+                  }}
+                >
+                  Face does not match ID!
+                </Typography>
+          </Box>
+          <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
+            <Button variant="contained" href="/">
+                Back to Start
+            </Button>
+          </Box>
         </Box>
-        <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-          <Button variant="contained" href="/">
-              Back to Start
-          </Button>
-        </Box>
-      </Box>
-    </ThemeProvider>
-  );
+      </ThemeProvider>
+    );
+  }
 }
 
 export default IDFaceNotMatched;

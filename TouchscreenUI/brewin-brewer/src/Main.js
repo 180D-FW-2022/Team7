@@ -11,6 +11,11 @@ import TryAgain from './pages/TryAgain';
 import IDFaceNotMatched from './pages/IDFaceNotMatched';
 import InvalidID from './pages/InvalidID';
 import Menu from './pages/Menu';
+import QRCodeReader from './pages/QRCodeReader'
+import AwaitPayment from './pages/AwaitPayment'
+import InvalidQRCode from './pages/InvalidQRCode';
+import SobrietyTest from './pages/SobrietyTest';
+import SobrietyTestInstructions from './pages/SobrietyTestInstructions';
 
 const Main = () => {
   return (
@@ -25,6 +30,11 @@ const Main = () => {
       <Route path='/invalidid' element={<InvalidID/>}></Route>
       <Route path='/idfacenotmatched' element={<IDFaceNotMatched/>}></Route>
       <Route path='/menu' element={<Menu/>}></Route>
+      <Route path='/qrcodereader' element={<QRCodeReader/>}></Route>
+      <Route path='/awaitpayment' element={<AwaitPayment/>}></Route>
+      <Route path='/invalidqrcode' element={<InvalidQRCode/>}></Route>
+      <Route path='/sobrietytest' element={<SobrietyTest/>}></Route>
+      <Route path='/sobrietytestinstructions' element={<SobrietyTestInstructions/>}></Route>
     </Routes>
   );
 }
