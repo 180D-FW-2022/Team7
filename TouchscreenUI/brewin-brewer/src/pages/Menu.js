@@ -10,7 +10,7 @@ import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@emotion/react';
 import { db } from '../utils/firebase';
-import { get, query, ref } from "firebase/database";
+import { get, query, ref, update } from "firebase/database";
 import MicIcon from '@mui/icons-material/Mic';
 import CancelIcon from '@mui/icons-material/Cancel';
 
@@ -32,7 +32,33 @@ const theme = createTheme({
       main: '#0d8b2f',
     }
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 400,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
 });
+
+var client = "";
+
+const getAudioText = () => {
+  const url = `http://localhost:80/audioText/`;
+  return fetch(url)
+  .then(response => response.json())
+  .then(json => {
+      console.log('parsed json', json) // access json.body here
+      if(json['text'] !== 'null') {
+          return json['text'];
+      }
+      else {
+          return null;
+      }
+  })
+}
 
 class Menu extends Component {
 
@@ -42,16 +68,18 @@ class Menu extends Component {
         menuItems: [],
         customerData: [],
         customerTab: [],
+        hotMic: false,
     }
   }
 
   componentDidMount() {
-    this.retrieveMenuData('fabcas01', '0000000');
-    this.retrieveCustomerData('fabcas01', 'fabcas01');
-    const timeout = setTimeout(() => {
-      window.location.replace('/')
-  }, 300000); //render for 5 minutes and then push to start if nothing done
 
+    this.retrieveMenuData(sessionStorage.getItem("adminID"), sessionStorage.getItem("deviceID"));
+    this.retrieveCustomerData(sessionStorage.getItem("adminID"), sessionStorage.getItem("customerID"));
+    const timeout = setTimeout(() => {
+      this.exit();
+  }, 300000); //render for 5 minutes and then push to start if nothing done
+      sessionStorage.setItem("timeoutID", timeout.toString());
       return () => clearTimeout(timeout);
   }
 
@@ -61,7 +89,7 @@ class Menu extends Component {
       if (snapshot.exists()) {
         data = snapshot.val();
         this.setState({customerData: data, customerTab: data['tab']});
-        //console.log(Object.entries(data));
+        sessionStorage.setItem("totalCost", data["totalCost"]/100);
       } else {
         console.log("No data available");
       }
@@ -77,7 +105,6 @@ class Menu extends Component {
       if (snapshot.exists()) {
         data = snapshot.val();
         this.setState({menuItems: data});
-        //console.log(Object.values(data));
       } else {
         console.log("No data available");
       }
@@ -85,6 +112,96 @@ class Menu extends Component {
       console.error(error);
     });
     return data;
+  }
+
+  makeDrink(cost, item, tank1, tank2, tank3) {
+    const newQtyTotal = this.state.customerData['totalQty'] + 1;
+    const newCostTotal = this.state.customerData['totalCost'] + cost;
+    const newItemQty = this.state.customerData['tab'][item]['qty'] + 1;
+    const newSubtotalCost = this.state.customerData['tab'][item]['subTotal'] + cost;
+
+    //MQTT
+    const mqtt = require('mqtt');
+    const host = "test.mosquitto.org";
+    const port = 8080;
+    const clientID = sessionStorage.getItem("deviceID");
+    const connectUrl = `ws://${host}:${port}/mqtt`;
+    client = mqtt.connect(connectUrl, {
+      clientId: clientID,
+      clean: true,
+      connectTimeout: 4000,
+      reconnectPeriod: 1000
+    });
+
+    const updates = {};
+    updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalCost`] = newCostTotal;
+    updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalQty`] = newQtyTotal;
+    updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/tab/${item}/qty`] = newItemQty;
+    updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/tab/${item}/subTotal`] = newSubtotalCost;
+    update(ref(db), updates).then(() => {
+      console.log("Customer Tab Data Updated");
+      // send MQTT message to make drink
+      const topic = `BrewinBrewer/${sessionStorage.getItem("deviceID")}/Touchscreen`;
+      client.on('connect', () => {
+        client.publish(topic, `${tank1} ${tank2} ${tank3}`, { qos: 0, retain: false }, (error) => {
+          if (error) {
+            console.error(error)
+          }
+          else {
+            console.log("Message Sent");
+            this.goToDrinkMakingPage();
+          }
+        })
+      });
+
+    }).catch((error) => {
+      console.error(error);
+      return false;
+    });
+  }
+
+  setToListenMode() {
+    this.setState({hotMic: true});
+    getAudioText().then((text) => {this.audioCommand(text)});
+  }
+
+  audioCommand(text) {
+    if(text === null) {
+      this.setState({hotMic: false});
+      return false;
+    }
+
+    //get menu items
+    const menuItems = Object.entries(this.state.menuItems);
+
+    // look for menu items or pay command by stringing words together (from large to small)
+    for (var i = 0; i < text.length; i++) {
+      for (var j = 0; j <= i; j++) {
+        // generate substring
+        var substring = text.substring(j,text.length-i+j);
+        substring = substring.trim();
+        substring = substring.toLowerCase();
+        console.log(substring);
+
+
+        //check if pay command
+        if ((substring === "pay now") || (substring === "check out") || (substring === "pay") || (substring === "checkout")) {
+          this.setState({hotMic: false});
+          this.goToAwaitPayment();
+          return true;
+        }
+        //check if menu item
+        for (var k = 0; k < menuItems.length; k++) {
+          if (substring === menuItems[k][0].trim().toLowerCase()) {
+            this.setState({hotMic: false});
+            this.makeDrink(parseInt(menuItems[k][1]['cost']), menuItems[k][0], menuItems[k][1]['tank1'], menuItems[k][1]['tank2'], menuItems[k][1]['tank3']);
+            return true;
+          }
+        }
+      }
+    }
+    this.setState({hotMic: false});
+    return false;
   }
 
   CentsToDollar(cents) {
@@ -96,18 +213,29 @@ class Menu extends Component {
     return `$${dollars}.${centsLeft}`;
   }
 
-  exit() {
-    // add function to clear data here
+  goToAwaitPayment() {
+    clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+    window.location.href = "/awaitpayment";
+  }
 
-    window.location.replace('/'); //goes back to start
+  goToDrinkMakingPage() {
+    clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+    window.location.href = "/drinkbeingmade";
+  }
+
+  exit() {
+    // clear data
+    clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+    sessionStorage.clear();
+    window.location.href = "/"; //goes back to start
    }
 
   render() {
-    const menuButtonPadding = `${16/Object.keys(this.state.menuItems).length}rem`;
+    const menuButtonPadding = `${10/Object.keys(this.state.menuItems).length}rem`;
     return (
         <ThemeProvider theme={theme}>
         <Box height="100vh">
-            <AppBar position="static" height="10vh">
+            <AppBar position="static">
                 <Toolbar disableGutters>
                 <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, mr: 2, ml: 1 }}/>
                 <Typography
@@ -126,10 +254,10 @@ class Menu extends Component {
                 >
                     BREWIN' BREWS
                 </Typography>
-                <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 88, fontSize:'45px' }}/>
+                <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 60, fontSize:'40px' }}/>
                 </Toolbar>
             </AppBar>
-            <Box display="flex" justifyContent="center" alignItems="center" height="90vh">
+            <Box display="flex" justifyContent="center" alignItems="center" height="calc(100vh - 64px)">
                 <Box display="block" justifyContent="center" alignItems="center" width="60vw" height="100%" bgcolor={theme.palette.secondary.main}>
                     <Box display="flex" justifyContent="center" alignItems="center" height="10%" width="100%" bgcolor={theme.palette.secondary.main}>
                         <Typography
@@ -168,7 +296,7 @@ class Menu extends Component {
                           Object.entries(this.state.menuItems).map((item) => (
                             <Box display="block">
                               <Box display="block" justifyContent="center" alignItems="center" height="80%">
-                                <Fab color="info" href='/' sx={{p:menuButtonPadding, m:'auto'}}>
+                                <Fab color="info" onClick={() => this.makeDrink(parseInt(item[1]['cost']), item[0], item[1]['tank1'], item[1]['tank2'], item[1]['tank3'])} sx={{p:menuButtonPadding, m:'auto'}}>
                                     <Typography
                                     sx={{
                                         display: { xs: 'none', md: 'flex' },
@@ -206,7 +334,7 @@ class Menu extends Component {
                         }
                     </Box>
                     <Box display="flex" height="15%" width="100%" bgcolor={theme.palette.secondary.main}>
-                      <Fab color="primary" href='/' sx={{ml:'20px'}}>
+                      <Fab color={this.state.hotMic? "info" : "primary"} sx={{ml:'20px'}} onClick={() => this.setToListenMode()}>
                         <MicIcon/>
                       </Fab>
                     </Box>
@@ -247,7 +375,7 @@ class Menu extends Component {
                           {item[1]['qty']}
                           </Typography>
                           <Typography
-                          variant="h6"
+                          variant="body1"
                           component="a"
                           sx={{
                           display: { xs: 'none', md: 'flex' },
@@ -280,7 +408,7 @@ class Menu extends Component {
                     </Box>
                     <Box display="flex" justifyContent="center" alignItems="center" height="15%" width="100%" bgcolor={theme.palette.success.main}>
                         <Typography
-                        variant="h5"
+                        variant="h6"
                         component="a"
                         sx={{
                         display: { xs: 'none', md: 'flex', marginLeft: '5px', marginRight: '5px' },
@@ -295,7 +423,7 @@ class Menu extends Component {
                         </Typography>
                     </Box>
                     <Box display="flex" justifyContent="center" alignItems="center" height="10%" width="100%" bgcolor={theme.palette.success.main}>
-                        <Button variant="contained" color="cash" href="/qrcodereader">
+                        <Button variant="contained" color="cash" onClick={() => this.goToAwaitPayment()}>
                           <ShoppingCartCheckoutIcon color="secondary" sx={{mr: '10px'}}/>
                           <Typography
                           variant="h5"
@@ -315,13 +443,6 @@ class Menu extends Component {
                     </Box>
                 </Box>
             </Box>
-            { /*
-            <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-            <Button variant="contained" href="/">
-                Back to Start
-            </Button>
-            </Box>
-                        */}
         </Box>
         </ThemeProvider>
     );

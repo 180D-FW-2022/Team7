@@ -8,6 +8,8 @@ import SportsBarIcon from '@mui/icons-material/SportsBar';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@emotion/react';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { db } from '../utils/firebase';
+import { get, query, ref } from "firebase/database";
 
 const theme = createTheme({
   palette: {
@@ -24,6 +26,15 @@ const theme = createTheme({
       main: '#0D698B',
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 400,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
 });
 
 class QRCodeReader extends Component {
@@ -31,21 +42,23 @@ class QRCodeReader extends Component {
         super(props);
         this.getVideo = this.getVideo.bind(this);
         this.state = {
+          numberOfDrinks: 0
         }
       }
     
       componentDidMount() {
         this.getVideo();
+        this.getCustomerInfo();
         const timeout = setTimeout(() => {
-          window.location.replace('/')
+          this.exit();
       }, 300000); //render for 5 minutes and then push to start if nothing done
-    
+          sessionStorage.setItem("timeoutID", timeout.toString());
           return () => clearTimeout(timeout);
       }
     
       getVideo() {
         navigator.mediaDevices
-          .getUserMedia({video: {width: 500}})
+          .getUserMedia({video: {width: 450}})
           .then(stream => {
             var video = document.querySelector("video");
             video.srcObject = stream;
@@ -59,16 +72,52 @@ class QRCodeReader extends Component {
       };
 
       exit() {
-        // add function to clear data here
-    
-        window.location.replace('/'); //goes back to start
+        // clear data
+        clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+        sessionStorage.clear();
+        window.location.href = "/"; //goes back to start
        }
+
+       goToMenu() {
+        clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+        window.location.href = "/menu";
+       }
+
+       gotToInvalidQRCode() {
+        clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+        window.location.href = "/invalidqrcode";
+       }
+
+       gotToSobrietyTestInstructions() { //only if had >3 drinks on tab (too easy to workaround tho) 
+        clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+        window.location.href = "/sobrietytestinstructions";
+       }
+
+       getCustomerInfo() {
+        sessionStorage.setItem("customerID", "fabcas01"); //will retrieve customer ID from qr code later
+        this.retrieveCustomerData(sessionStorage.getItem("adminID"), sessionStorage.getItem("customerID"));
+       }
+
+       retrieveCustomerData(adminID, customerID) { 
+        var data = null;
+        get(query(ref(db, `Admins/${adminID}/customers/${customerID}`))).then((snapshot) => {
+          if (snapshot.exists()) {
+            data = snapshot.val();
+            this.setState({numberOfDrinks: data['totalQty']});
+          } else {
+            console.log("No data available");
+          }
+        }).catch((error) => {
+          console.error(error);
+        });
+        return data;
+      }
 
       render() {
         return (
             <ThemeProvider theme={theme}>
               <Box height="100vh">
-                <AppBar position="static" height="10vh">
+                <AppBar position="static">
                     <Toolbar disableGutters>
                       <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, mr: 2, ml: 1 }}/>
                       <Typography
@@ -87,10 +136,10 @@ class QRCodeReader extends Component {
                       >
                         BREWIN' BREWS
                       </Typography>
-                      <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 88, fontSize:'45px' }}/>
+                      <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 60, fontSize:'40px' }}/>
                     </Toolbar>
                 </AppBar>
-                <Box display="flex" justifyContent="center" alignItems="center" height="20vh" bgcolor={theme.palette.secondary.main}>
+                <Box display="flex" justifyContent="center" alignItems="center" height="10vh" bgcolor={theme.palette.secondary.main}>
                     <Typography
                         variant="h6"
                         noWrap
@@ -106,17 +155,14 @@ class QRCodeReader extends Component {
                         Please show your Venmo QR Code
                       </Typography>
                 </Box>
-                <Box display="flex" justifyContent="center" alignItems="center" height="60vh" bgcolor={theme.palette.secondary.main}>
+                <Box display="flex" justifyContent="center" alignItems="center" height="calc(90vh - 64px)" bgcolor={theme.palette.secondary.main}>
                   <video/>
                 </Box>
                 <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-                  <Button variant="contained" href="/">
-                      Back to Start
-                  </Button>
-                  <Button variant="contained" href="/awaitpayment">
+                  <Button variant="contained" onClick={() => {this.state.numberOfDrinks > 3 ? this.gotToSobrietyTestInstructions() : this.goToMenu()}}>
                       Valid QR Code
                   </Button>
-                  <Button variant="contained" href="/invalidqrcode">
+                  <Button variant="contained" onClick={() => this.gotToInvalidQRCode()}>
                       Invalid QR Code
                   </Button>
                 </Box>

@@ -31,9 +31,37 @@ const theme = createTheme({
       main: '#808080',
     }
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 400,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
 });
 
-var instructionInterval = null;
+const detectTap = () => {
+  const url = `http://localhost:80/tapDetection/`;
+  return fetch(url)
+  .then(response => response.json())
+  .then(json => {
+      console.log('parsed json', json) // access json.body here
+      if(json['result'] === 'tap') {
+          console.log("TAP DETECTED");
+          return true;
+      }
+      else if (json['result'] === 'IMU not detected') {
+        console.log("ERROR: IMU NOT DETECTED");
+        return false;
+      }
+      else {
+          console.log("TAP NOT DETECTED");
+          return false;
+      }
+  })
+}
 
 class SobrietyTest extends Component {
 
@@ -62,14 +90,15 @@ class SobrietyTest extends Component {
     const delay = setTimeout(() => {
       this.runSobrietyTest()
       }, delayMs); //delay sequence for 5 seconds
-
+      sessionStorage.setItem("timeoutID", timeout.toString());
         return () => {clearTimeout(timeout); clearTimeout(delay)};
     }
 
    exit() {
-    // add function to clear data here
-
-    window.location.replace('/'); //goes back to start
+    // clear data
+    clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+    sessionStorage.clear();
+    window.location.href = "/"; //goes back to start
    }
 
    pickRandomInstruction() {
@@ -78,51 +107,93 @@ class SobrietyTest extends Component {
    }
 
    iterateThroughAPattern() {
-    const delayMs = 3000;
-    var i = 0;
-    if (!instructionInterval) {
-      instructionInterval = setInterval(() => {
-        if (i < 6) {
-          const instruction = this.pickRandomInstruction();
-          const simonSaysBool = Math.random() < 0.5;
-          var instructionColor = theme.palette.gray.main;
+    var score = 0;
+
+    var instruction = this.pickRandomInstruction();
+    var simonSaysBool = Math.random() < 0.5;
+    var instructionColor = theme.palette.gray.main;
+    if (instruction === 'tap') { //tap
+      instructionColor = theme.palette.cash.main;
+    }
+    else { //no tap
+      instructionColor = theme.palette.info.main;
+    }
+    this.setState({circleColor1: instructionColor, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
+    detectTap().then((tapped) => { //Detect 1st tap
+      if(((simonSaysBool) && (instruction === 'tap') && (tapped)) || ((!simonSaysBool) && (instruction === 'tap') && (!tapped)) || ((simonSaysBool) && (instruction !== 'tap') && (!tapped)) || ((!simonSaysBool) && (instruction !== 'tap') && (tapped))) {
+        score++;
+      }
+      instruction = this.pickRandomInstruction();
+      simonSaysBool = Math.random() < 0.5;
+      instructionColor = theme.palette.gray.main;
+      if (instruction === 'tap') { //tap
+        instructionColor = theme.palette.cash.main;
+      }
+      else { //no tap
+        instructionColor = theme.palette.info.main;
+      }
+      this.setState({circleColor1: theme.palette.gray.main, circleColor2: instructionColor, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
+      detectTap().then((tapped) => { //Detect 2nd tap
+        if(((simonSaysBool) && (instruction === 'tap') && (tapped)) || ((!simonSaysBool) && (instruction === 'tap') && (!tapped)) || ((simonSaysBool) && (instruction !== 'tap') && (!tapped)) || ((!simonSaysBool) && (instruction !== 'tap') && (tapped))) {
+          score++;
+        }
+        instruction = this.pickRandomInstruction();
+        simonSaysBool = Math.random() < 0.5;
+        instructionColor = theme.palette.gray.main;
+        if (instruction === 'tap') { //tap
+          instructionColor = theme.palette.cash.main;
+        }
+        else { //no tap
+          instructionColor = theme.palette.info.main;
+        }
+        this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: instructionColor, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
+        detectTap().then((tapped) => { //Detect 3rd tap
+          if(((simonSaysBool) && (instruction === 'tap') && (tapped)) || ((!simonSaysBool) && (instruction === 'tap') && (!tapped)) || ((simonSaysBool) && (instruction !== 'tap') && (!tapped)) || ((!simonSaysBool) && (instruction !== 'tap') && (tapped))) {
+            score++;
+          }
+          instruction = this.pickRandomInstruction();
+          simonSaysBool = Math.random() < 0.5;
+          instructionColor = theme.palette.gray.main;
           if (instruction === 'tap') { //tap
             instructionColor = theme.palette.cash.main;
           }
           else { //no tap
             instructionColor = theme.palette.info.main;
           }
-          //console.log(i);
-          switch(i) {
-            case 0:
-              this.setState({circleColor1: instructionColor, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
-              i++;
-              break;
-            case 1:
-              this.setState({circleColor1: theme.palette.gray.main, circleColor2: instructionColor, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
-              i++;
-              break;
-            case 2:
-              this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: instructionColor, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
-              i++;
-              break;
-            case 3:
-              this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: instructionColor, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
-              i++;
-              break;
-            case 4:
-              this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: instructionColor, simonSays: simonSaysBool});
-              i++;
-              break;
-            default:
-              this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, completedTest: true, attempts: this.state.attempts+1}, () => console.log(this.state.attempts));
-              clearInterval(instructionInterval);
-              instructionInterval = null;
-              break;
-          }
-        }
-      }, delayMs);
-    }
+          this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: instructionColor, circleColor5: theme.palette.gray.main, simonSays: simonSaysBool});
+          detectTap().then((tapped) => { //Detect 4th tap
+            if(((simonSaysBool) && (instruction === 'tap') && (tapped)) || ((!simonSaysBool) && (instruction === 'tap') && (!tapped)) || ((simonSaysBool) && (instruction !== 'tap') && (!tapped)) || ((!simonSaysBool) && (instruction !== 'tap') && (tapped))) {
+              score++;
+            }
+            instruction = this.pickRandomInstruction();
+            simonSaysBool = Math.random() < 0.5;
+            instructionColor = theme.palette.gray.main;
+            if (instruction === 'tap') { //tap
+              instructionColor = theme.palette.cash.main;
+            }
+            else { //no tap
+              instructionColor = theme.palette.info.main;
+            }
+            this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: instructionColor, simonSays: simonSaysBool});
+            detectTap().then((tapped) => { //Detect 5th tap
+              if(((simonSaysBool) && (instruction === 'tap') && (tapped)) || ((!simonSaysBool) && (instruction === 'tap') && (!tapped)) || ((simonSaysBool) && (instruction !== 'tap') && (!tapped)) || ((!simonSaysBool) && (instruction !== 'tap') && (tapped))) {
+                score++;
+              }
+              this.setState({circleColor1: theme.palette.gray.main, circleColor2: theme.palette.gray.main, circleColor3: theme.palette.gray.main, circleColor4: theme.palette.gray.main, circleColor5: theme.palette.gray.main, completedTest: true, attempts: this.state.attempts+1});
+              if (score === 5) {
+                this.testPassed();
+                return true;
+              }
+              else { // did not pass test
+                this.testFailed();
+                return true;
+              }
+            })
+          })
+        })
+      })
+    })
+    return false;
    }
 
    runSobrietyTest() {
@@ -130,32 +201,37 @@ class SobrietyTest extends Component {
     }
 
     testPassed() {
-      this.setState({testPassed: true}, this.moveToNextPage("/menu"));
+      this.setState({testPassed: true});
+      this.moveToMenu();
     }
 
     testFailed() {
       this.setState({testPassed: false}, () => {
         if (this.state.attempts >= 2) {
-        this.moveToNextPage("/");
-      }});
+          this.exit();
+        }
+      });
     }
 
     tryAgain() {
       this.runSobrietyTest();
     }
 
-    moveToNextPage(url) {
+    moveToMenu() {
+      clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
       const timeoutMs = 3000;
-      setTimeout(() => {
-        window.location.replace(url);
+      const timeout = setTimeout(() => {
+        window.location.href = '/menu';
       }, timeoutMs);
+
+      return () => clearTimeout(timeout);
     }
 
   render() {
     return (
         <ThemeProvider theme={theme}>
             <Box height="100vh">
-            <AppBar position="static" height="10vh">
+            <AppBar position="static">
                 <Toolbar disableGutters>
                 <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, mr: 2, ml: 1 }}/>
                 <Typography
@@ -174,10 +250,10 @@ class SobrietyTest extends Component {
                 >
                     BREWIN' BREWS
                 </Typography>
-                <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 88, fontSize:'45px' }}/>
+                <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 60, fontSize:'40px' }}/>
                 </Toolbar>
             </AppBar>
-            <Box display="block" justifyContent="center" alignItems="center" height="20vh" bgcolor={theme.palette.secondary.main}>
+            <Box display="block" justifyContent="center" alignItems="center" height="calc(30vh - 64px)" bgcolor={theme.palette.secondary.main}>
                 <Typography
                     variant="h6"
                     noWrap
@@ -328,7 +404,7 @@ class SobrietyTest extends Component {
                 <Circle sx={{fontSize: 100, color: this.state.circleColor4}}/>
                 <Circle sx={{fontSize: 100, color: this.state.circleColor5}}/>
             </Box>
-            <Box display="flex" justifyContent="center" alignItems="center" height="10vh" bgcolor={theme.palette.secondary.main}>
+            <Box display="flex" justifyContent="center" alignItems="center" height="20vh" bgcolor={theme.palette.secondary.main}>
                 { (this.state.attempts < 2) && (this.state.completedTest) && (!this.state.testPassed) &&
                   <Button variant="contained" onClick={() => this.tryAgain()}>
                     Try Again
@@ -336,7 +412,7 @@ class SobrietyTest extends Component {
                 }
             </Box>
             <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-            <Button variant="contained" href="/">
+            <Button variant="contained" onClick={() => this.exit()}>
                 Back to Start
             </Button>
             <Button variant="contained" onClick={() => this.testPassed()}>

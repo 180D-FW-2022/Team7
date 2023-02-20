@@ -131,6 +131,11 @@ class DeviceManagement extends Component {
   }
 
   updateMenuItems(menuItem) {
+    if((parseInt(this.state.inputingredient1Oz) + parseInt(this.state.inputingredient2Oz) + parseInt(this.state.inputingredient3Oz)) > 9) {
+      // Max amount of ounces per drink is 9
+      console.log("CANNOT ADD DRINK: SURPASSES MAX OUNCES PER CUP");
+      return false;
+    }
     set(ref(db, `Admins/${this.state.adminID}/devices/${this.state.currentDevice}/Menu/${menuItem}`), {
       cost: this.state.inputCost,
       tank1: this.state.inputingredient1Oz,
@@ -276,10 +281,10 @@ class DeviceManagement extends Component {
                   </Box>
                   <Box width="70vw" height="100%" sx={{background: "linear-gradient(-45deg, #0D698B, #F2F1E8, #E34234)"}}>
                     {this.state.currentDevice !== "" &&
-                    <Box>
+                    <Box width="100%" height="100%">
                       <Box height="20%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
                         <Typography
-                        variant="h2"
+                        variant="h4"
                         component="a"
                         sx={{
                           display: { xs: 'none', md: 'flex', justifyContent: 'center' },
@@ -298,11 +303,9 @@ class DeviceManagement extends Component {
                           <Button variant='contained' onClick={() => this.updateTankIngredients(this.state.currentDevice)} sx={{marginY: "10px"}}>Update</Button>
                         </Box>
                       </Box>
-                      <Box height="40%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-                        {//display current menu items and add/remove menu items
-                        }
+                      <Box height="35%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
                         <Typography
-                        variant="h2"
+                        variant="h4"
                         component="a"
                         sx={{
                           display: { xs: 'none', md: 'flex', justifyContent: 'center' },
@@ -344,9 +347,9 @@ class DeviceManagement extends Component {
                         </Box>
                       </Box>
                       <Box height="20%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-                        <Box height="20%" width="100%">
+                        <Box height="20%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
                           <Typography
-                          variant="h2"
+                          variant="h4"
                           component="a"
                           sx={{
                             display: { xs: 'none', md: 'flex', justifyContent: 'center' },
@@ -365,10 +368,10 @@ class DeviceManagement extends Component {
                           </Box>
                         </Box>
                         </Box>
-                        <Box height="20%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-                          <Box height="20%" width="100%">
+                        <Box height="25%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+                          <Box height="25%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
                             <Typography
-                            variant="h2"
+                            variant="h4"
                             component="a"
                             sx={{
                               display: { xs: 'none', md: 'flex', justifyContent: 'center' },
@@ -384,7 +387,7 @@ class DeviceManagement extends Component {
                               <TextField id="newDeviceID" onChange={(event) => {this.handleNewDeviceIDFieldChange(event.target.value)}} label="New Device ID" variant="filled" margin="normal" sx={{width: '60%', bgcolor: "white"}}/>
                               <Button variant='contained' onClick={() => this.addNewDevice()} sx={{marginY: "10px"}}>Add New Device</Button>
                             </Box>
-                            <Button variant='contained' onClick={() => this.deleteDevice()} sx={{width: "80%", fontSize: "30px"}}>Delete This Device</Button>
+                            <Button variant='contained' onClick={() => this.deleteDevice()} sx={{width: "80%", fontSize: "20px"}}>Delete This Device</Button>
                         </Box>
                         </Box>
                       </Box>

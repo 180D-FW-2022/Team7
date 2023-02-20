@@ -239,7 +239,7 @@ class Login extends Component {
         case "login":
             return(
                 <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' sx={{boxShadow: "10px 10px 67px -5px rgba(0,0,0,0.61)",aspectRatio: "7/9", width: "35vw", backgroundColor: "white", borderRadius: "30px"}}>
-                    <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="40%">
+                    <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="35%">
                       <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, fontSize: '10rem'}}/>
                       <Typography
                         variant="h3"
@@ -259,7 +259,7 @@ class Login extends Component {
                     </Box>
                     <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="15%">
                       <Typography
-                      variant="h2"
+                      variant="h3"
                       component="a"
                       sx={{
                         display: { xs: 'none', md: 'flex', justifyContent: 'center' },
@@ -284,7 +284,7 @@ class Login extends Component {
                       <TextField error id="password" onChange={(event) => {this.handlePasswordFieldChange(event.target.value)}} label="Password" helperText={this.state.formError} variant="outlined" margin="normal" type="password" sx={{width: '65%'}}/>
                     </Box>
                     }
-                  <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="10%">
+                  <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="15%">
                     <Button variant="contained" onClick={() => this.authenticateLogin()} sx={{fontSize: '20px'}}>Submit</Button>
                   </Box>
                   <Box display="flex" flexDirection="column" justifyContent="space-evenly" alignItems='center' height="15%">

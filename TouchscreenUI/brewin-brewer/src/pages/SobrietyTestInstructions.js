@@ -27,6 +27,15 @@ const theme = createTheme({
       main: '#0d8b2f',
     }
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 400,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
 });
 
 class SobrietyTestInstructions extends Component {
@@ -38,23 +47,29 @@ class SobrietyTestInstructions extends Component {
 
   componentDidMount() {
     const timeout = setTimeout(() => {
-      window.location.replace('/')
+      this.exit();
   }, 300000); //render for 5 minutes and then push to start if nothing done
-
+      sessionStorage.setItem("timeoutID", timeout.toString());
       return () => clearTimeout(timeout);
   }
 
-  exit() {
-    // add function to clear data here
+  goToSobrietyTest() {
+    clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+    window.location.href = "/sobrietytest";
+  }
 
-    window.location.replace('/'); //goes back to start
+  exit() {
+    // clear data
+    clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+    sessionStorage.clear();
+    window.location.href = "/"; //goes back to start
    }
 
   render() {
     return (
       <ThemeProvider theme={theme}>
         <Box height="100vh">
-          <AppBar position="static" height="10vh">
+          <AppBar position="static">
               <Toolbar disableGutters>
                 <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, mr: 2, ml: 1 }}/>
                 <Typography
@@ -73,12 +88,12 @@ class SobrietyTestInstructions extends Component {
                 >
                   BREWIN' BREWS
                 </Typography>
-                <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 88, fontSize:'45px' }}/>
+                <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 60, fontSize:'40px' }}/>
               </Toolbar>
           </AppBar>
-          <Box display="flex" justifyContent="center" alignItems="center" height="20vh" bgcolor={theme.palette.secondary.main}>
+          <Box display="flex" justifyContent="center" alignItems="center" height="calc(30vh - 64px)" bgcolor={theme.palette.secondary.main}>
               <Typography
-                  variant="h2"
+                  variant="h3"
                   noWrap
                   component="a"
                   sx={{
@@ -92,7 +107,7 @@ class SobrietyTestInstructions extends Component {
                   Simon Says: A Sobriety Test
                 </Typography>
           </Box>
-          <Box display="flex" justifyContent="center" alignItems="center" height="50vh" paddingX="50px" bgcolor={theme.palette.secondary.main}>
+          <Box display="flex" justifyContent="center" alignItems="center" height="60vh" paddingX="50px" bgcolor={theme.palette.secondary.main}>
               <Typography
                   variant="h5"
                   component="a"
@@ -213,17 +228,17 @@ class SobrietyTestInstructions extends Component {
                   }}
                 >
                   . Make sure you 
-                  DO NOT follow the tap pattern when the instruction 
+                  DO THE OPPOSITE when the instruction 
                   does not start with "Simon Says". 
                 </Typography>
           </Box>
           <Box display="flex" justifyContent="center" alignItems="center" height="10vh" bgcolor={theme.palette.secondary.main}>
-            <Button variant="contained" color="primary" href="/sobrietytest">
+            <Button variant="contained" color="primary" onClick={() => this.goToSobrietyTest()}>
                 Press to Begin
             </Button>
           </Box>
           <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-            <Button variant="contained" href="/">
+            <Button variant="contained" onClick={() => this.exit()}>
                 Back to Start
             </Button>
           </Box>

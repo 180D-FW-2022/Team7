@@ -24,6 +24,15 @@ const theme = createTheme({
       main: '#0D698B',
     },
   },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 400,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
 });
 
 class InvalidQRCode extends Component {
@@ -35,23 +44,22 @@ class InvalidQRCode extends Component {
 
     componentDidMount() {
         const timeout = setTimeout(() => {
-            window.location.replace('/menu')
-        }, 5000); //render for 5 seconds and then push to menu
+            this.exit();
+        }, 5000); //render for 5 seconds and then exit
     
             return () => clearTimeout(timeout);
     }
 
     exit() {
-      // add function to clear data here
-  
-      window.location.replace('/'); //goes back to start
+      sessionStorage.clear();
+      window.location.href = "/"; //goes back to start
      }
 
     render() {
         return (
             <ThemeProvider theme={theme}>
               <Box height="100vh">
-                <AppBar position="static" height="10vh">
+                <AppBar position="static">
                     <Toolbar disableGutters>
                       <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, mr: 2, ml: 1 }}/>
                       <Typography
@@ -70,10 +78,10 @@ class InvalidQRCode extends Component {
                       >
                         BREWIN' BREWS
                       </Typography>
-                      <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 88, fontSize:'45px' }}/>
+                      <CancelIcon color='info' onClick={() => this.exit()} sx={{ display: { xs: 'none', md: 'flex' }, ml: 60, fontSize:'40px' }}/>
                     </Toolbar>
                 </AppBar>
-                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="80vh" bgcolor={theme.palette.secondary.main}>
+                <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="calc(100vh - 64px)" bgcolor={theme.palette.secondary.main}>
                         <Typography
                         variant="h2"
                         noWrap
@@ -104,7 +112,7 @@ class InvalidQRCode extends Component {
                       </Typography>
                 </Box>
                 <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-                  <Button variant="contained" href="/">
+                  <Button variant="contained" onClick={() => this.exit()}>
                       Back to Start
                   </Button>
                 </Box>
