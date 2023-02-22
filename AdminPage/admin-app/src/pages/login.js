@@ -240,7 +240,7 @@ class Login extends Component {
             return(
                 <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' sx={{boxShadow: "10px 10px 67px -5px rgba(0,0,0,0.61)",aspectRatio: "7/9", width: "35vw", backgroundColor: "white", borderRadius: "30px"}}>
                     <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="35%">
-                      <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, fontSize: '10rem'}}/>
+                      <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, fontSize: '8rem'}}/>
                       <Typography
                         variant="h3"
                         noWrap
@@ -297,7 +297,7 @@ class Login extends Component {
           return(
             <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' sx={{boxShadow: "10px 10px 67px -5px rgba(0,0,0,0.61)",aspectRatio: "7/9", width: "35vw", backgroundColor: "white", borderRadius: "30px"}}>
                     <Box display="flex" justifyContent="center" alignItems='center' height="5%" width="100%">
-                      <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, fontSize: '4rem', paddingX: '1rem'}}/>
+                      <SportsBarIcon color='info' sx={{ display: { xs: 'none', md: 'flex' }, fontSize: '3rem', paddingX: '1rem'}}/>
                       <Typography
                         variant="h4"
                         noWrap
@@ -315,27 +315,27 @@ class Login extends Component {
                       </Typography>
                     </Box>
                     {this.state.formError === "" &&
-                    <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="75%" width="100%">
-                      <TextField id="firstname" onChange={(event) => {this.handleFirstnameFieldChange(event.target.value)}} label="First Name" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField id="lastname" onChange={(event) => {this.handleLastnameFieldChange(event.target.value)}} label="Last Name" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField id="username" onChange={(event) => {this.handleUsernameFieldChange(event.target.value)}} label="New Username" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField id="password" onChange={(event) => {this.handlePasswordFieldChange(event.target.value)}} label="Password" variant="outlined" margin="normal" type="password" sx={{width: '65%'}}/>
-                      <TextField id="passwordconfirmation" onChange={(event) => {this.handlePasswordConfirmationFieldChange(event.target.value)}} label="Re-Type Password" variant="outlined" margin="normal" type="password" sx={{width: '65%'}}/>
-                      <TextField id="venmoUsername" onChange={(event) => {this.handleVenmoUsernameFieldChange(event.target.value)}} label="Venmo Username" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField id="venmoPassword" onChange={(event) => {this.handleVenmoPasswordFieldChange(event.target.value)}} label="Venmo Password" variant="outlined" margin="normal" type="password" sx={{width: '65%'}}/>
-                      <TextField id="pin" onChange={(event) => {this.handlePinFieldChange(event.target.value)}} label="Pin For Password Reset" variant="outlined" margin="normal" sx={{width: '65%'}}/>
+                    <Box display="flex" flexDirection="column" justifyContent="space-evenly" alignItems='center' height="75%" width="100%">
+                      <TextField id="firstname" onChange={(event) => {this.handleFirstnameFieldChange(event.target.value)}} label="First Name" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField id="lastname" onChange={(event) => {this.handleLastnameFieldChange(event.target.value)}} label="Last Name" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField id="username" onChange={(event) => {this.handleUsernameFieldChange(event.target.value)}} label="New Username" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField id="password" onChange={(event) => {this.handlePasswordFieldChange(event.target.value)}} label="Password" variant="outlined" margin="dense" size='small' type="password" sx={{width: '65%'}}/>
+                      <TextField id="passwordconfirmation" onChange={(event) => {this.handlePasswordConfirmationFieldChange(event.target.value)}} label="Re-Type Password" variant="outlined" margin="dense" size='small' type="password" sx={{width: '65%'}}/>
+                      <TextField id="venmoUsername" onChange={(event) => {this.handleVenmoUsernameFieldChange(event.target.value)}} label="Venmo Username" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField id="venmoPassword" onChange={(event) => {this.handleVenmoPasswordFieldChange(event.target.value)}} label="Venmo Password" variant="outlined" margin="dense" size='small' type="password" sx={{width: '65%'}}/>
+                      <TextField id="pin" onChange={(event) => {this.handlePinFieldChange(event.target.value)}} label="Pin For Password Reset" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
                     </Box>
                     }
                     {this.state.formError !== "" &&
-                    <Box display="flex" flexDirection="column" justifyContent="center" alignItems='center' height="75%" width="100%">
-                      <TextField error id="firstname" onChange={(event) => {this.handleFirstnameFieldChange(event.target.value)}} label="First Name" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField error id="lastname" onChange={(event) => {this.handleLastnameFieldChange(event.target.value)}} label="Last Name" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField error id="username" onChange={(event) => {this.handleUsernameFieldChange(event.target.value)}} label="New Username" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField error id="password" onChange={(event) => {this.handlePasswordFieldChange(event.target.value)}} label="Password" variant="outlined" margin="normal" type="password" sx={{width: '65%'}}/>
-                      <TextField error id="passwordconfirmation" onChange={(event) => {this.handlePasswordConfirmationFieldChange(event.target.value)}} label="Re-Type Password" variant="outlined" margin="normal" type="password" sx={{width: '65%'}}/>
-                      <TextField error id="venmoUsername" onChange={(event) => {this.handleVenmoUsernameFieldChange(event.target.value)}} label="Venmo Username" variant="outlined" margin="normal" sx={{width: '65%'}}/>
-                      <TextField error id="venmoPassword" onChange={(event) => {this.handleVenmoPasswordFieldChange(event.target.value)}} label="Venmo Password" variant="outlined" margin="normal" type="password" sx={{width: '65%'}}/>
-                      <TextField error id="pin" onChange={(event) => {this.handlePinFieldChange(event.target.value)}} helperText={this.state.formError} label="Pin For Password Reset" variant="outlined" margin="normal" sx={{width: '65%'}}/>
+                    <Box display="flex" flexDirection="column" justifyContent="space-evenly" alignItems='center' height="75%" width="100%">
+                      <TextField error id="firstname" onChange={(event) => {this.handleFirstnameFieldChange(event.target.value)}} label="First Name" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField error id="lastname" onChange={(event) => {this.handleLastnameFieldChange(event.target.value)}} label="Last Name" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField error id="username" onChange={(event) => {this.handleUsernameFieldChange(event.target.value)}} label="New Username" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField error id="password" onChange={(event) => {this.handlePasswordFieldChange(event.target.value)}} label="Password" variant="outlined" margin="dense" size='small' type="password" sx={{width: '65%'}}/>
+                      <TextField error id="passwordconfirmation" onChange={(event) => {this.handlePasswordConfirmationFieldChange(event.target.value)}} label="Re-Type Password" variant="outlined" margin="dense" size='small' type="password" sx={{width: '65%'}}/>
+                      <TextField error id="venmoUsername" onChange={(event) => {this.handleVenmoUsernameFieldChange(event.target.value)}} label="Venmo Username" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
+                      <TextField error id="venmoPassword" onChange={(event) => {this.handleVenmoPasswordFieldChange(event.target.value)}} label="Venmo Password" variant="outlined" margin="dense" size='small' type="password" sx={{width: '65%'}}/>
+                      <TextField error id="pin" onChange={(event) => {this.handlePinFieldChange(event.target.value)}} helperText={this.state.formError} label="Pin For Password Reset" variant="outlined" margin="dense" size='small' sx={{width: '65%'}}/>
                     </Box>
                     }
                   <Box display="flex" flexDirection="column" justifyContent="space-evenly" alignItems='center' height="15%">
@@ -360,7 +360,7 @@ class Login extends Component {
                       textDecoration: 'none'
                     }}
                   >
-                    Enter your username and security pin to reset your password
+                    Enter your Username and Security Pin to Reset your Password
                   </Typography>
                 </Box>
                 {this.state.formError === "" &&

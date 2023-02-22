@@ -278,6 +278,10 @@ class DeviceManagement extends Component {
                         <Button variant="contained" color={this.state.currentDevice === item[0] ? "info" : "success"} fullWidth sx={{fontSize: "50px"}} onClick={() => this.updateCurrentDeviceView(item[0])}>{item[0]}</Button>
                       ))
                     }
+                    <Box width="100%" display="flex" justifyContent="space-evenly">
+                      <TextField id="newDeviceID" onChange={(event) => {this.handleNewDeviceIDFieldChange(event.target.value)}} label="New Device ID" variant="filled" margin="normal" sx={{width: '60%', bgcolor: "white"}}/>
+                      <Button variant='contained' onClick={() => this.addNewDevice()} sx={{marginY: "10px"}}>Add New Device</Button>
+                    </Box>
                   </Box>
                   <Box width="70vw" height="100%" sx={{background: "linear-gradient(-45deg, #0D698B, #F2F1E8, #E34234)"}}>
                     {this.state.currentDevice !== "" &&
@@ -303,7 +307,7 @@ class DeviceManagement extends Component {
                           <Button variant='contained' onClick={() => this.updateTankIngredients(this.state.currentDevice)} sx={{marginY: "10px"}}>Update</Button>
                         </Box>
                       </Box>
-                      <Box height="35%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+                      <Box height="50%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
                         <Typography
                         variant="h4"
                         component="a"
@@ -319,7 +323,7 @@ class DeviceManagement extends Component {
                         </Typography>
                         {this.state.currentMenu &&
                           Object.entries(this.state.currentMenu).map((item) => (
-                            <Box display="flex" justifyContent="space-between" alignItems="center" width="75%">
+                            <Box display="flex" justifyContent="space-between" alignItems="center" width="90%">
                               <Typography
                               variant="h6"
                               component="a"
@@ -339,7 +343,7 @@ class DeviceManagement extends Component {
                         }
                         <Box display="flex" justifyContent="space-evenly" alignItems="center">
                           <TextField id="Item Name" onChange={(event) => {this.handleItemFieldChange(event.target.value)}} label="Item Name" variant="filled" margin="normal" sx={{width: '20%', bgcolor: "white"}}/>
-                          <TextField id="Cost" onChange={(event) => {this.handleCostFieldChange(event.target.value)}} label="Cost (cents)" variant="filled" margin="normal" sx={{width: '10%', bgcolor: "white"}}/>
+                          <TextField id="Cost" onChange={(event) => {this.handleCostFieldChange(event.target.value)}} label="Cost ¢" variant="filled" margin="normal" sx={{width: '10%', bgcolor: "white"}}/>
                           <TextField id="Tank 1 Oz" onChange={(event) => {this.handleIngredient1OzFieldChange(event.target.value)}} label="Tank 1 Oz" variant="filled" margin="normal" sx={{width: '10%', bgcolor: "white"}}/>
                           <TextField id="Tank 2 Oz" onChange={(event) => {this.handleIngredient2OzFieldChange(event.target.value)}} label="Tank 2 Oz" variant="filled" margin="normal" sx={{width: '10%', bgcolor: "white"}}/>
                           <TextField id="Tank 3 Oz" onChange={(event) => {this.handleIngredient3OzFieldChange(event.target.value)}} label="Tank 3 Oz" variant="filled" margin="normal" sx={{width: '10%', bgcolor: "white"}}/>
@@ -368,25 +372,8 @@ class DeviceManagement extends Component {
                           </Box>
                         </Box>
                         </Box>
-                        <Box height="25%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-                          <Box height="25%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
-                            <Typography
-                            variant="h4"
-                            component="a"
-                            sx={{
-                              display: { xs: 'none', md: 'flex', justifyContent: 'center' },
-                              fontFamily: 'monospace',
-                              fontWeight: 700,
-                              color: theme.palette.primary.main,
-                              textDecoration: 'none'
-                            }}
-                            >
-                            Device Settings
-                            </Typography>
-                            <Box width="100%" display="flex" justifyContent="space-evenly">
-                              <TextField id="newDeviceID" onChange={(event) => {this.handleNewDeviceIDFieldChange(event.target.value)}} label="New Device ID" variant="filled" margin="normal" sx={{width: '60%', bgcolor: "white"}}/>
-                              <Button variant='contained' onClick={() => this.addNewDevice()} sx={{marginY: "10px"}}>Add New Device</Button>
-                            </Box>
+                        <Box height="10%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
+                          <Box height="100%" width="100%" display="flex" justifyContent="center" flexDirection="column" alignItems="center">
                             <Button variant='contained' onClick={() => this.deleteDevice()} sx={{width: "80%", fontSize: "20px"}}>Delete This Device</Button>
                         </Box>
                         </Box>
