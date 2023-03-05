@@ -117,8 +117,8 @@ class Menu extends Component {
   makeDrink(cost, item, tank1, tank2, tank3) {
     const newQtyTotal = this.state.customerData['totalQty'] + 1;
     const newCostTotal = this.state.customerData['totalCost'] + cost;
-    const newItemQty = this.state.customerData['tab'][item]['qty'] + 1;
-    const newSubtotalCost = this.state.customerData['tab'][item]['subTotal'] + cost;
+    const newItemQty = this.state.customerTab ?  this.state.customerData['tab'][item]['qty']+ 1 : 1;
+    const newSubtotalCost = this.state.customerTab ? this.state.customerData['tab'][item]['subTotal'] + cost : cost;
 
     //MQTT
     const mqtt = require('mqtt');
@@ -205,6 +205,9 @@ class Menu extends Component {
   }
 
   CentsToDollar(cents) {
+    if(!cents) {
+      return "$0.00"
+    }
     const dollars = parseInt(cents/100);
     var centsLeft = cents - dollars*100;
     if (centsLeft < 10) {
@@ -357,7 +360,7 @@ class Menu extends Component {
                         </Typography>
                     </Box>
                     <Box display="block" justifyContent="center" alignItems="center" height="60%" width="100%" bgcolor={theme.palette.success.main}>
-                    { this.state.customerData &&
+                    { this.state.customerTab &&
                       Object.entries(this.state.customerTab).map((item) => (
                         <Box display="flex" justifyContent="space-between" paddingTop="15px">
                           <Typography

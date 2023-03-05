@@ -9,7 +9,8 @@ import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@emotion/react';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { db } from '../utils/firebase';
-import { get, query, ref } from "firebase/database";
+import { update, get, query, ref } from "firebase/database";
+import QrScanner from 'qr-scanner';
 
 const theme = createTheme({
   palette: {
@@ -48,18 +49,23 @@ class QRCodeReader extends Component {
     
       componentDidMount() {
         this.getVideo();
-        this.getCustomerInfo();
+        const interval = setInterval(() => {
+            this.decode();
+          }, 500); //check video stream for qr code every half second
+          sessionStorage.setItem("intervalID", interval.toString());
+  
         const timeout = setTimeout(() => {
           this.exit();
       }, 300000); //render for 5 minutes and then push to start if nothing done
           sessionStorage.setItem("timeoutID", timeout.toString());
-          return () => clearTimeout(timeout);
+          return () => {clearTimeout(timeout); clearInterval(interval)};
       }
     
       getVideo() {
         navigator.mediaDevices
-          .getUserMedia({video: {width: 450}})
+          .getUserMedia({video: {width: 450, height: 325}})
           .then(stream => {
+            this.decode(stream);
             var video = document.querySelector("video");
             video.srcObject = stream;
             video.onloadedmetadata = function(e) {
@@ -71,9 +77,53 @@ class QRCodeReader extends Component {
           });
       };
 
+     /*
+     getVideo() {
+      const qrScanner = new QrScanner(
+        videoElem,
+        result => console.log('decoded qr code:', result),
+        { returnDetailedScanResult: true },
+      );
+      qrScanner.start();
+     }
+     */
+      decode() {
+        var canvas = document.createElement('canvas');
+        var video = document.querySelector("video");
+
+        canvas.width = 450;
+        canvas.height = 325;
+
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage( video, 0, 0, canvas.width, canvas.height );
+
+        var image = canvas.toDataURL('image/jpeg');
+        QrScanner.scanImage(image)
+        .then(result => this.parseQRCode(result))
+        .catch(err => (err === "No QR code found") ? console.log(err) : this.gotToInvalidQRCode());
+      }
+
+      parseQRCode(text) {
+        //parse user_id
+        var url = new URL(text);
+        console.log(url.hostname);
+        console.log(url.searchParams.get('user_id'));
+        if ((url.hostname === "venmo.com") && (url.searchParams.get('user_id') !== "")) {
+          //get customer info
+          this.getCustomerInfo(url.searchParams.get('user_id'));
+
+          //go to next page
+          this.state.numberOfDrinks > 3 ? this.gotToSobrietyTestInstructions() : this.goToMenu();         
+        }
+        else {
+          this.gotToInvalidQRCode();
+        }
+      }
+
       exit() {
         // clear data
         clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
+        clearInterval(parseInt(sessionStorage.getItem("intervalID")));
         sessionStorage.clear();
         window.location.href = "/"; //goes back to start
        }
@@ -93,8 +143,8 @@ class QRCodeReader extends Component {
         window.location.href = "/sobrietytestinstructions";
        }
 
-       getCustomerInfo() {
-        sessionStorage.setItem("customerID", "fabcas01"); //will retrieve customer ID from qr code later
+       getCustomerInfo(userID) {
+        sessionStorage.setItem("customerID", userID); //will retrieve customer ID from qr code later
         this.retrieveCustomerData(sessionStorage.getItem("adminID"), sessionStorage.getItem("customerID"));
        }
 
@@ -106,6 +156,18 @@ class QRCodeReader extends Component {
             this.setState({numberOfDrinks: data['totalQty']});
           } else {
             console.log("No data available");
+            this.setState({numberOfDrinks: 0});
+            // fill in new customer data
+            const updates = {};
+            updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalCost`] = 0;
+            updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalQty`] = 0;
+            update(ref(db), updates).then(() => {
+              console.log("Customer Data Created");
+            }).catch((error) => {
+              console.error(error);
+              return false;
+            });
+
           }
         }).catch((error) => {
           console.error(error);

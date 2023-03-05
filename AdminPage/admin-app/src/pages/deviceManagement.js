@@ -367,7 +367,7 @@ class DeviceManagement extends Component {
                           </Typography>
                           <Box width="100%" display="flex" justifyContent="space-evenly">
                             <TextField id="Venmo Username" onChange={(event) => {this.handleVenmoUsernameFieldChange(event.target.value)}} defaultValue={this.state.inputVenmoUsername} label="Venmo Username" variant="filled" margin="normal" sx={{width: '30%', bgcolor: "white"}}/>
-                            <TextField id="Venmo Password" onChange={(event) => {this.handleVenmoPasswordFieldChange(event.target.value)}} defaultValue={this.state.inputVenmoPassword} label="Venmo Password" variant="filled" margin="normal" sx={{width: '30%', bgcolor: "white"}}/>
+                            <TextField id="Venmo Password" onChange={(event) => {this.handleVenmoPasswordFieldChange(event.target.value)}} defaultValue={this.state.inputVenmoPassword} label="Venmo Password" type="password" variant="filled" margin="normal" sx={{width: '30%', bgcolor: "white"}}/>
                             <Button variant='contained' onClick={() => this.updateVenmoSettings(this.state.currentDevice)} sx={{marginY: "10px"}}>Update</Button>
                           </Box>
                         </Box>

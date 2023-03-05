@@ -10,6 +10,8 @@ import { ThemeProvider } from '@emotion/react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { CircularProgress } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { db } from '../utils/firebase';
+import { ref, update } from "firebase/database";
 
 const theme = createTheme({
   palette: {
@@ -44,7 +46,7 @@ const requestPayment = async () => {
        const venmoUsername = sessionStorage.getItem("venmoUsername");
        const venmoPassword = sessionStorage.getItem("venmoPassword");
        const totalCost = sessionStorage.getItem("totalCost");
-       const customerID = "2827409434869760113";//sessionStorage.getItem("customerID");
+       const customerID = sessionStorage.getItem("customerID");
        const url = `http://localhost:80/requestPayment/${venmoUsername}/${venmoPassword}/${totalCost}/${customerID}`;
        return fetch(url)
         .then(response => response.json())
@@ -135,16 +137,16 @@ class AwaitPayment extends Component {
     clearInterval(parseInt(sessionStorage.getItem("intervalID")));
 
     // clear tab
-    // const updates = {};
-    // updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalCost`] = 0;
-    // updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalQty`] = 0;
-    // updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/tab`] = null;
-    // update(ref(db), updates).then(() => {
-    //   console.log("Customer Tab Data Updated");
-    // }).catch((error) => {
-    //   console.error(error);
-    //   return false;
-    // });
+    const updates = {};
+    updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalCost`] = 0;
+    updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalQty`] = 0;
+    updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/tab`] = null;
+    update(ref(db), updates).then(() => {
+      console.log("Customer Tab Data Updated");
+    }).catch((error) => {
+      console.error(error);
+      return false;
+    });
 
     const timeoutMs = 3000;
     const timeout = setTimeout(() => {
