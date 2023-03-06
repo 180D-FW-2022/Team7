@@ -32,14 +32,14 @@ void setup()
 void loop()
 {
   if(ready) {
-    for (pos = 0; pos <= 70; pos += 1) { // goes from 0 degrees to 180 degrees
+    for (pos = 0; pos <= 90; pos += 1) { // goes from 0 degrees to 180 degrees
       // in steps of 1 degree
-      myservo2.write(70-pos);
+      myservo2.write(90-pos);
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
      delay(15);                       // waits 15 ms for the servo to reach the position
     }
-    for (pos = 70; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-      myservo2.write(70-pos);
+    for (pos = 90; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+      myservo2.write(90-pos);
       myservo.write(pos);              // tell servo to go to position in variable 'pos'
      delay(15);                       // waits 15 ms for the servo to reach the position
     }
