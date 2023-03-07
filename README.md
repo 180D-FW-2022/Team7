@@ -33,10 +33,11 @@ for longer hours.  Bar owners will also have access to an admin page that they m
   8. Open up 2 terminals (one for running backend python server, and one to open the front-end app)
   9. On the backend server terminal, navigate to *TouchscreenUI/brewin-brewer/src/utils/* and run `uwsgi --http localhost:9999 --master -p 4 -w backend:app`
   10. On the front-end terminal, navigate to *TouchscreenUI/brewin-brewer/* and run
-  
+      ```
       npm run build
       serve -s build
       /usr/bin/chromium-browser --max-old-space-size=750 --noerrdialogs --disable-infobars --kiosk http://localhost:3000
+      ```
   App should now be running and take up the whole Touch Display (as a result of kiosk mode)
   
 ### Admin Page Software Setup
