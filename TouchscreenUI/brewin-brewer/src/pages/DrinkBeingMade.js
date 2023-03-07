@@ -186,14 +186,6 @@ class DrinkBeingMade extends Component {
                   </Box>
                 }
             </Box>
-            <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-            <Button variant="contained" onClick={() => this.exit()}>
-                Back to Start
-            </Button>
-            <Button variant="contained" onClick={() => this.drinkCompleted()}>
-                Drink Complete
-            </Button>
-            </Box>
         </Box>
         </ThemeProvider>
     );

@@ -51,7 +51,7 @@ class QRCodeReader extends Component {
         this.getVideo();
         const interval = setInterval(() => {
             this.decode();
-          }, 500); //check video stream for qr code every half second
+          }, 2000); //check video stream for qr code every 2 seconds
           sessionStorage.setItem("intervalID", interval.toString());
   
         const timeout = setTimeout(() => {
@@ -60,7 +60,7 @@ class QRCodeReader extends Component {
           sessionStorage.setItem("timeoutID", timeout.toString());
           return () => {clearTimeout(timeout); clearInterval(interval)};
       }
-    
+
       getVideo() {
         navigator.mediaDevices
           .getUserMedia({video: {width: 450, height: 325}})
@@ -77,44 +77,39 @@ class QRCodeReader extends Component {
           });
       };
 
-     /*
-     getVideo() {
-      const qrScanner = new QrScanner(
-        videoElem,
-        result => console.log('decoded qr code:', result),
-        { returnDetailedScanResult: true },
-      );
-      qrScanner.start();
-     }
-     */
       decode() {
         var canvas = document.createElement('canvas');
         var video = document.querySelector("video");
 
-        canvas.width = 450;
-        canvas.height = 325;
+        canvas.width = 1920;
+        canvas.height = 1080;
 
         var ctx = canvas.getContext('2d');
         ctx.drawImage( video, 0, 0, canvas.width, canvas.height );
-
         var image = canvas.toDataURL('image/jpeg');
-        QrScanner.scanImage(image)
+        QrScanner.scanImage(image, {returnDetailedScanResult:true, scanRegion: {downScaledHeight:325, downScaledWidth:450}})
         .then(result => this.parseQRCode(result))
-        .catch(err => (err === "No QR code found") ? console.log(err) : this.gotToInvalidQRCode());
+        .catch(err => console.log(err));
       }
 
       parseQRCode(text) {
         //parse user_id
-        var url = new URL(text);
+	var url = "";
+	try {
+	    url = new URL(text['data']);
+	} catch (_) {
+	    console.log(text);
+	    return false;
+	}
         console.log(url.hostname);
         console.log(url.searchParams.get('user_id'));
         if ((url.hostname === "venmo.com") && (url.searchParams.get('user_id') !== "")) {
           //get customer info
           this.getCustomerInfo(url.searchParams.get('user_id'));
-
-          //go to next page
-          this.state.numberOfDrinks > 3 ? this.gotToSobrietyTestInstructions() : this.goToMenu();         
         }
+	else if (text['data'] === "") {
+	    console.log("No QR Code");
+	}
         else {
           this.gotToInvalidQRCode();
         }
@@ -138,7 +133,7 @@ class QRCodeReader extends Component {
         window.location.href = "/invalidqrcode";
        }
 
-       gotToSobrietyTestInstructions() { //only if had >3 drinks on tab (too easy to workaround tho) 
+       goToSobrietyTestInstructions() { //only if had >3 drinks on tab (too easy to workaround tho) 
         clearTimeout(parseInt(sessionStorage.getItem("timeoutID")));
         window.location.href = "/sobrietytestinstructions";
        }
@@ -153,7 +148,7 @@ class QRCodeReader extends Component {
         get(query(ref(db, `Admins/${adminID}/customers/${customerID}`))).then((snapshot) => {
           if (snapshot.exists()) {
             data = snapshot.val();
-            this.setState({numberOfDrinks: data['totalQty']});
+            this.setState({numberOfDrinks: data['totalQty']},() => {this.state.numberOfDrinks > 3 ? this.goToSobrietyTestInstructions() : this.goToMenu()});
           } else {
             console.log("No data available");
             this.setState({numberOfDrinks: 0});
@@ -163,6 +158,7 @@ class QRCodeReader extends Component {
             updates[`Admins/${sessionStorage.getItem("adminID")}/customers/${sessionStorage.getItem("customerID")}/totalQty`] = 0;
             update(ref(db), updates).then(() => {
               console.log("Customer Data Created");
+	      this.goToMenu();
             }).catch((error) => {
               console.error(error);
               return false;
@@ -214,19 +210,11 @@ class QRCodeReader extends Component {
                           textDecoration: 'none',
                         }}
                       >
-                        Please show your Venmo QR Code
+                        Please show your Venmo QR Code (Screenshot + Zoom In)
                       </Typography>
                 </Box>
                 <Box display="flex" justifyContent="center" alignItems="center" height="calc(90vh - 64px)" bgcolor={theme.palette.secondary.main}>
                   <video/>
-                </Box>
-                <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-                  <Button variant="contained" onClick={() => {this.state.numberOfDrinks > 3 ? this.gotToSobrietyTestInstructions() : this.goToMenu()}}>
-                      Valid QR Code
-                  </Button>
-                  <Button variant="contained" onClick={() => this.gotToInvalidQRCode()}>
-                      Invalid QR Code
-                  </Button>
                 </Box>
               </Box>
             </ThemeProvider>

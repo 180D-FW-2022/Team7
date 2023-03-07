@@ -47,7 +47,7 @@ const requestPayment = async () => {
        const venmoPassword = sessionStorage.getItem("venmoPassword");
        const totalCost = sessionStorage.getItem("totalCost");
        const customerID = sessionStorage.getItem("customerID");
-       const url = `http://localhost:80/requestPayment/${venmoUsername}/${venmoPassword}/${totalCost}/${customerID}`;
+       const url = `http://localhost:9999/requestPayment/${venmoUsername}/${venmoPassword}/${totalCost}/${customerID}`;
        return fetch(url)
         .then(response => response.json())
         .then(json => {
@@ -273,14 +273,6 @@ class AwaitPayment extends Component {
                     </Typography>
                   </Box>
                 }
-            </Box>
-            <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-            <Button variant="contained" onClick={() => this.exit()}>
-                Back to Start
-            </Button>
-            <Button variant="contained" onClick={() => this.paymentSuccessful()}>
-                Payment Received
-            </Button>
             </Box>
         </Box>
         </ThemeProvider>

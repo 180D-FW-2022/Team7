@@ -3,7 +3,7 @@ import string
 import time
 import sys
 import math
-#import IMU
+import IMU
 import datetime
 import os
 import random # generate random numbers for simon says and instructions
@@ -215,19 +215,18 @@ def getAudioText():
     r = sr.Recognizer()
     with sr.Microphone() as source:
         print("Say Something!")
-        audio = r.listen(source)
+        audio = r.listen(source, 3, 3)
     try:
         text = r.recognize_google(audio)
-        print("Google Speech Recognition thinks you said: " + text)
-        return jsonify({"text": text})
+        print("Google thinks you said: " + text)
+        return jsonify({'text': text})
     except sr.UnknownValueError:
-        print("Google Speech Recognition could not understand audio.")
-        return jsonify({"text": "null"})
+        print("Google could not understand audio.")
+        return jsonify({'text': 'null'})
     except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
-        return jsonify({"text": "null"})
+        print("Could not request results from Google Recognition service; {0}".format(e))
+        return jsonify({'text': 'null'})
 
-"""
 @app.route("/tapDetection/")
 def detectTap():
     # initialize IMU
@@ -475,6 +474,6 @@ def detectTap():
         tap = 0
         val = "no tap"
     return jsonify({"result": val})
-"""
+
 if __name__ == "__main__":
-    app.run(host='localhost', port=80)
+    app.run(host='localhost', port=9999)

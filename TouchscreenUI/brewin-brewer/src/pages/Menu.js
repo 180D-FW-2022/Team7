@@ -45,8 +45,8 @@ const theme = createTheme({
 
 var client = "";
 
-const getAudioText = () => {
-  const url = `http://localhost:80/audioText/`;
+const getAudioText = async () => {
+  const url = `http://localhost:9999/audioText/`;
   return fetch(url)
   .then(response => response.json())
   .then(json => {
@@ -117,8 +117,8 @@ class Menu extends Component {
   makeDrink(cost, item, tank1, tank2, tank3) {
     const newQtyTotal = this.state.customerData['totalQty'] + 1;
     const newCostTotal = this.state.customerData['totalCost'] + cost;
-    const newItemQty = this.state.customerTab ?  this.state.customerData['tab'][item]['qty']+ 1 : 1;
-    const newSubtotalCost = this.state.customerTab ? this.state.customerData['tab'][item]['subTotal'] + cost : cost;
+    const newItemQty = this.state.customerData['tab'][item] ?  this.state.customerData['tab'][item]['qty']+ 1 : 1;
+    const newSubtotalCost = this.state.customerData['tab'][item] ? this.state.customerData['tab'][item]['subTotal'] + cost : cost;
 
     //MQTT
     const mqtt = require('mqtt');
@@ -174,12 +174,8 @@ class Menu extends Component {
     //get menu items
     const menuItems = Object.entries(this.state.menuItems);
 
-    // look for menu items or pay command by stringing words together (from large to small)
-    for (var i = 0; i < text.length; i++) {
-      for (var j = 0; j <= i; j++) {
         // generate substring
-        var substring = text.substring(j,text.length-i+j);
-        substring = substring.trim();
+        var substring = text.trim();
         substring = substring.toLowerCase();
         console.log(substring);
 
@@ -197,8 +193,6 @@ class Menu extends Component {
             this.makeDrink(parseInt(menuItems[k][1]['cost']), menuItems[k][0], menuItems[k][1]['tank1'], menuItems[k][1]['tank2'], menuItems[k][1]['tank3']);
             return true;
           }
-        }
-      }
     }
     this.setState({hotMic: false});
     return false;

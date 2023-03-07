@@ -43,7 +43,7 @@ const theme = createTheme({
 });
 
 const detectTap = () => {
-  const url = `http://localhost:80/tapDetection/`;
+  const url = `http://localhost:9999/tapDetection/`;
   return fetch(url)
   .then(response => response.json())
   .then(json => {
@@ -197,7 +197,7 @@ class SobrietyTest extends Component {
    }
 
    runSobrietyTest() {
-    this.setState({completedTest: false, testPassed: false}, this.iterateThroughAPattern());
+    this.setState(({completedTest: false, testPassed: false}), () => this.iterateThroughAPattern());
     }
 
     testPassed() {
@@ -410,17 +410,6 @@ class SobrietyTest extends Component {
                     Try Again
                   </Button>
                 }
-            </Box>
-            <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-            <Button variant="contained" onClick={() => this.exit()}>
-                Back to Start
-            </Button>
-            <Button variant="contained" onClick={() => this.testPassed()}>
-                Test Passed
-            </Button>
-            <Button variant="contained" onClick={() => this.testFailed()}>
-                Test Not Passed
-            </Button>
             </Box>
         </Box>
         </ThemeProvider>

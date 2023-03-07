@@ -111,11 +111,6 @@ class InvalidQRCode extends Component {
                         Please Try Again.
                       </Typography>
                 </Box>
-                <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-                  <Button variant="contained" onClick={() => this.exit()}>
-                      Back to Start
-                  </Button>
-                </Box>
               </Box>
             </ThemeProvider>
           );

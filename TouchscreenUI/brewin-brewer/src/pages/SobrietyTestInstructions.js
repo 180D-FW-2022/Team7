@@ -237,11 +237,6 @@ class SobrietyTestInstructions extends Component {
                 Press to Begin
             </Button>
           </Box>
-          <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-            <Button variant="contained" onClick={() => this.exit()}>
-                Back to Start
-            </Button>
-          </Box>
         </Box>
       </ThemeProvider>
     );
