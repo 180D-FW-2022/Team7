@@ -266,7 +266,7 @@ class SobrietyTest extends Component {
                     textDecoration: 'none',
                     }}
                 >
-                    Follow the Following Pattern Below by Tapping the IMU Below
+                    Follow the Following Pattern Below by Tapping the IMU
                 </Typography>
                 <Box display="flex" justifyContent="center" alignItems="center">
                   <Typography
