@@ -173,7 +173,7 @@ class SobrietyTestInstructions extends Component {
                     textDecoration: 'none',
                   }}
                 >
-                  . Tap the IMU below when
+                  . Tap the IMU when
                   the colored circle is
                 </Typography>
                 <Typography
