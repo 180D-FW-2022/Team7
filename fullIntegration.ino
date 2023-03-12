@@ -6,7 +6,7 @@ bool ready = false;
 const int dirPin = 2;
 const int stepPin = 3;
 //const int stepsPerRevolution = 200;
-const int stepsPerRevolution = 550;
+const int stepsPerRevolution = 375;
 #include <Servo.h>
 Servo myservo2;
 Servo myservo;
@@ -44,7 +44,8 @@ void loop()
      delay(15);                       // waits 15 ms for the servo to reach the position
     }
 	  // Set motor direction clockwise
-	  digitalWrite(dirPin, HIGH);
+	  digitalWrite(dirPin, LOW);
+    delay(2000);
 
 	  // Spin motor slowly
 	  for(int x = 0; x < stepsPerRevolution; x++)
@@ -55,15 +56,15 @@ void loop()
 		  delayMicroseconds(2000);
 	  }
     digitalWrite(11, HIGH);
-    delay(1000);
+    delay(data_to_echo[0] * 1400);
     digitalWrite(11, LOW);
     digitalWrite(12, HIGH);
-    delay(1000);
+    delay(data_to_echo[1] * 1410);
     digitalWrite(12, LOW);
     digitalWrite(13, HIGH);
-    delay(1000);
+    delay(data_to_echo[2] * 1286);
     digitalWrite(13, LOW);
-	  delay(7000); // Wait 15 seconds
+	  delay(7000); // Wait 7 seconds
     ready = false;
   }
 }
