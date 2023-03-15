@@ -117,8 +117,21 @@ class Menu extends Component {
   makeDrink(cost, item, tank1, tank2, tank3) {
     const newQtyTotal = this.state.customerData['totalQty'] + 1;
     const newCostTotal = this.state.customerData['totalCost'] + cost;
-    const newItemQty = (typeof this.state.customerData['tab'][item] == 'undefined') ?  this.state.customerData['tab'][item]['qty']+ 1 : 1;
-    const newSubtotalCost = (typeof this.state.customerData['tab'][item] == 'undefined') ? this.state.customerData['tab'][item]['subTotal'] + cost : cost;
+    
+    var newItemQty = 1;
+    var newSubtotalCost = cost;
+    try {
+      newItemQty = this.state.customerData['tab'][item] ?  this.state.customerData['tab'][item]['qty']+ 1 : 1;
+    }
+    catch (error) {
+      console.log(error);
+    }
+    try {
+      newCostTotal = this.state.customerData['tab'][item] ? this.state.customerData['tab'][item]['subTotal'] + cost : cost;
+    }
+    catch (error) {
+      console.log(error);
+    }
 
     //MQTT
     const mqtt = require('mqtt');
