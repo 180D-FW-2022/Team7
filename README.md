@@ -29,7 +29,7 @@ for longer hours.  Bar owners will also have access to an admin page that they m
   4. Install [Python](https://installvirtual.com/how-to-install-python-3-8-on-raspberry-pi-raspbian/)
   5. Clone this repo and navigate to *TouchscreenUI/brewin-brewer* folder
   6. Run `npm install` to install all required dependencies
-  7. Navigate to /folder with credentials/ and edit json file with your credentials
+  7. Navigate to *TouchscreenUI/brewin-brewer/src/utils/admin.json* and edit json file with your Brewin' Brews username and deviceID
   8. Open up 2 terminals (one for running backend python server, and one to open the front-end app)
   9. On the backend server terminal, navigate to *TouchscreenUI/brewin-brewer/src/utils/* and run `uwsgi --http localhost:9999 --master -p 4 -w backend:app`
   10. On the front-end terminal, navigate to *TouchscreenUI/brewin-brewer/* and run
