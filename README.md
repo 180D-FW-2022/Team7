@@ -51,7 +51,17 @@ for longer hours.  Bar owners will also have access to an admin page that they m
     
 ### Electronics Power System Setup
 
-/maybe add wiring diagrams/
+The Brewer requires a 120V Power strip. A 120AC->12V Power Supply is required for operation via a coaxial cable. Each Pi and Arduino also need 5V power delivered via USB. 
+The following is the wiring diagram needed to build the electrical panel. The switches portion are mounted on the front facing touch screen panel 
+
+Electrical Panel: 
+![image](https://user-images.githubusercontent.com/56652396/225824222-c83970c8-5b8d-41b4-8c65-ec8a4ce77d06.png)
+![image](https://user-images.githubusercontent.com/56652396/225824458-9b38219f-9be3-4e50-9d3e-01945b090750.png)
+
+
+Touch Screen Panel: (Contains Switch panel, Berry IMU, Touch screen on front, and raspberry Pi 4 on the back)
+![image](https://user-images.githubusercontent.com/56652396/225824390-99df2603-0be2-4310-a0b4-6d9cfa45319f.png)
+
 
 ### Cup Dispenser and Conveyor Belt Setup
 
