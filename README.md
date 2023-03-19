@@ -17,7 +17,16 @@ for longer hours.  Bar owners will also have access to an admin page that they m
  - [BerryIMU](https://www.amazon.com/BerryIMUv2-10DOF-Accelerometer-Gyroscope-Magnetometer-Barometric/dp/B072MN8ZRC/ref=sr_1_11_sspa?keywords=berry+imu&qid=1678139719&sr=8-11-spons&psc=1&spLa=ZW5jcnlwdGVkUXVhbGlmaWVyPUEyRVRYSUFaUUVXWjJCJmVuY3J5cHRlZElkPUEwMzcxMDE1MjlVMlJVUTRFNldYRSZlbmNyeXB0ZWRBZElkPUEwMTY3NDkzMzM3VkVZT0I1NE03VCZ3aWRnZXROYW1lPXNwX210ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU=)
  - [Arducam 5MP Camera](https://www.amazon.com/dp/B012V1HEP4?ref=nb_sb_ss_w_as-reorder-t1_k0_1_7&amp=&crid=2QYMUEVIRCJCE&amp=&sprefix=arducam)
  - USB keyboard and mouse (for setting up device)
- - *ADD MORE AS NEEDED*
+ - Raspberry Pi Zero WH
+ - Arduino Uno or any of its counterparts
+ - Access to a 3D printer with PLA plastic
+ - 1/8" thickness rubber sheet
+ - [Set of metric screws and nuts](https://a.co/d/gEhhJih)
+ - M3 Lock Nuts
+ - NEMA 17 Stepper Motor
+ - A4988 Stepper Motor Controller
+ - 2 x MG996R Servo Motors
+ - 9 oz. Solo Cups
   
  ### Touchscreen Software Setup
   1. Install [Raspberry Pi OS with Desktop](https://www.raspberrypi.com/software/) on Raspberry Pi Model B
@@ -55,9 +64,10 @@ The Brewer requires a 120V Power strip. A 120AC->12V Power Supply is required fo
 The following is the wiring diagram needed to build the electrical panel. The switches portion are mounted on the front facing touch screen panel 
 
 Electrical Panel: 
-![image](https://user-images.githubusercontent.com/56652396/225824222-c83970c8-5b8d-41b4-8c65-ec8a4ce77d06.png)
-![image](https://user-images.githubusercontent.com/56652396/225824458-9b38219f-9be3-4e50-9d3e-01945b090750.png)
 
+![image](https://user-images.githubusercontent.com/56652396/225824222-c83970c8-5b8d-41b4-8c65-ec8a4ce77d06.png)
+
+![image](https://user-images.githubusercontent.com/56652396/225824458-9b38219f-9be3-4e50-9d3e-01945b090750.png)
 
 Touch Screen Panel: (Contains Switch panel, Berry IMU, Touch screen on front, and raspberry Pi 4 on the back)
 ![image](https://user-images.githubusercontent.com/56652396/225824390-99df2603-0be2-4310-a0b4-6d9cfa45319f.png)
@@ -65,11 +75,19 @@ Touch Screen Panel: (Contains Switch panel, Berry IMU, Touch screen on front, an
 
 ### Cup Dispenser and Conveyor Belt Setup
 
-/maybe just go over the STL files/assembly and how to setup arduino pi code/
+There exists a set of ready-to-print [cup dispenser](https://www.thingiverse.com/thing:3031499) and [conveyor belt](https://www.thingiverse.com/thing:3031479)
+files, but further modification is needed for the cup dispenser as the measurements are too small. We have found that sizing it up to 105% of its 
+original scale works well. Once all components are printed, assemble them with M3 and M5 screws and lock nuts. The instructions and images of the print
+files should suffice in showing how the parts and motors are assembled.
+
+![image](https://user-images.githubusercontent.com/57472147/226167824-8f9c2d8b-5a7e-4daa-93f9-b665329a7c1c.png)
+
+Once you obtain the Arduino and Raspberry Pi Zero, upload the code labeled `fullIntegration.ino` using the provided USB-B cable and the code
+labeleded `pi2c.py` respectively. For the Raspberry Pi, you will need to make sure that the code runs on boot, so access the Pi's OS and run
+`sudo crontab -e`, press 1 for nano, and add `@reboot python /home/pi/pi2c.py` to the file. Save and exit, and then wire the devices as follows:
+
+![image](https://user-images.githubusercontent.com/57472147/226167772-93a98920-3f2b-481b-9bd7-97b32066bb36.png)
+
+Mount all of your devices to the container, power them on, and you should be ready to go!
 
 #### Please reach out for any questions/concerns :)
-
-
-  
-  
-
